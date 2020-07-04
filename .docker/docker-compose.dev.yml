@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  api:
+    build:
+      target: dev
+    volumes:
+      - api:/api
+
+volumes:
+  api:
+    driver_opts:
+      type: none
+      device: '${PWD}/..'
+      o: bind
