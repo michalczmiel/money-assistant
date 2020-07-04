@@ -35,8 +35,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "djmoney",
     "rest_framework",
+    "djmoney",
+    "django_filters",
     "money_assistant.base",
     "money_assistant.transactions",
 ]
@@ -103,6 +104,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "PAGE_SIZE": 50,
 }
 

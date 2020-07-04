@@ -21,3 +21,4 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    filterset_fields = ("account", "category", "kind")
