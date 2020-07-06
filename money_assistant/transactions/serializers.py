@@ -20,6 +20,13 @@ class TransactionImportSerializer(serializers.Serializer):
     importer_type = serializers.CharField(max_length=10)
 
 
+class TransactionEnrichSerializer(serializers.Serializer):
+    account_id = serializers.IntegerField()
+    mappings = serializers.DictField(
+        child=serializers.ListField(child=serializers.CharField()), allow_empty=False
+    )
+
+
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction

@@ -8,8 +8,12 @@ from money_assistant.transactions.serializers import (
     CategorySerializer,
     TransactionSerializer,
     TransactionImportSerializer,
+    TransactionEnrichSerializer,
 )
-from money_assistant.transactions.services import import_transactions_from_file
+from money_assistant.transactions.services import (
+    import_transactions_from_file,
+    enrich_transactions_with_categories,
+)
 from money_assistant.transactions.models import Account, Category, Transaction
 
 
@@ -29,11 +33,18 @@ class TransactionViewSet(viewsets.ModelViewSet):
     filterset_fields = ("account", "category", "kind")
 
     @action(detail=False, url_path="import", methods=["post"])
-    def import_from_file(self, request, **kwargs):
+    def import_from_file(self, request):
         file = request.FILES.get("file")
         if not file:
             raise ValidationError(detail={"file": ["This field is required."]})
         serializer = TransactionImportSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             import_transactions_from_file(file=file, **serializer.data)
+        return Response("Success", status=status.HTTP_200_OK)
+
+    @action(detail=False, url_path="enrich", methods=["post"])
+    def map_categories(self, request):
+        serializer = TransactionEnrichSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            enrich_transactions_with_categories(**serializer.data)
         return Response("Success", status=status.HTTP_200_OK)

@@ -84,3 +84,19 @@ def import_transactions_from_file(file, account_id: int, importer_type: str):
     importer_class = CSV_IMPORTERS.get(importer_type)
     importer = importer_class()
     importer.process(file=file, account_id=account_id)
+
+
+def is_match(name: str, keywords: List[str]) -> bool:
+    normalised_transaction = name.lower().strip()
+    for keyword in keywords:
+        if keyword.lower().strip() in normalised_transaction:
+            return True
+    return False
+
+
+def enrich_transactions_with_categories(account_id: int, mappings: dict):
+    for transaction in Transaction.objects.filter(account_id=account_id):
+        for category_id, keywords in mappings.items():
+            if is_match(transaction.name, keywords):
+                transaction.category_id = category_id
+                transaction.save(update_fields=["category_id"])
