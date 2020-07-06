@@ -15,6 +15,11 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ("id", "name", "created_at", "modified_at")
 
 
+class TransactionImportSerializer(serializers.Serializer):
+    account_id = serializers.IntegerField()
+    importer_type = serializers.CharField(max_length=10)
+
+
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction

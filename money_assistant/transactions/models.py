@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.db import models
 from djmoney.models.fields import MoneyField
 
@@ -35,3 +37,6 @@ class Transaction(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+
+TransactionKind = Union[Transaction.CARD, Transaction.TRANSFER, Transaction.CASH]
