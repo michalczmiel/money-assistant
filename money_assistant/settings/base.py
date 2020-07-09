@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django_filters",
     "money_assistant.base",
     "money_assistant.transactions",
+    "money_assistant.budgets",
 ]
 
 MIDDLEWARE = [
