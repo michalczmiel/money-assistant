@@ -1,6 +1,7 @@
 from typing import Union
 
 from django.db import models
+from djmoney.money import Money
 from djmoney.models.fields import MoneyField
 
 from money_assistant.base.models import TimeStampedModel
@@ -20,6 +21,16 @@ class Account(TimeStampedModel):
         return self.name
 
 
+class TransactionExpensesManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(value__lt=Money(0.0))
+
+
+class TransactionIncomeManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(value__gt=Money(0.0))
+
+
 class Transaction(TimeStampedModel):
     CARD = "card"
     CASH = "cash"
@@ -34,6 +45,10 @@ class Transaction(TimeStampedModel):
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, blank=True, null=True
     )
+
+    objects = models.Manager()
+    income = TransactionIncomeManager()
+    expenses = TransactionExpensesManager()
 
     def __str__(self):
         return self.name
