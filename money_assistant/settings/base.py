@@ -38,12 +38,14 @@ INSTALLED_APPS = [
     "rest_framework",
     "djmoney",
     "django_filters",
+    "corsheaders",
     "money_assistant.base",
     "money_assistant.transactions",
     "money_assistant.budgets",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
