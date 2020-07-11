@@ -1,14 +1,18 @@
 import statistics
 from collections import defaultdict
+from typing import Optional
 from decimal import Decimal
 
 from money_assistant.transactions.models import Transaction
 
 
-class StatisticsService:
+class TransactionAnalysisService:
     @classmethod
-    def get_spending_statistics(cls) -> dict:
+    def _get_spending_statistics(cls) -> Optional[dict]:
         transactions = Transaction.expenses.all()
+
+        if not transactions:
+            return None
 
         spending_by_category = defaultdict(Decimal)
         spending_values = []
@@ -29,4 +33,10 @@ class StatisticsService:
             "std": round(statistics.stdev(spending_values), 2),
         }
 
-        return {"statistics": spending_statistics, "by_category": spending_by_category}
+        return {"analyzing": spending_statistics, "by_category": spending_by_category}
+
+    @classmethod
+    def get_analysis(cls):
+        return {
+            "spending": cls._get_spending_statistics(),
+        }

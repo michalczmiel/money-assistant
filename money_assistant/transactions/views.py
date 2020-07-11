@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.validators import ValidationError
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.request import Request
 
 from money_assistant.transactions.serializers import (
     AccountSerializer,
@@ -10,10 +11,9 @@ from money_assistant.transactions.serializers import (
     TransactionImportSerializer,
     TransactionEnrichSerializer,
 )
-from money_assistant.transactions.services import (
-    import_transactions_from_file,
-    enrich_transactions_with_categories,
-)
+from money_assistant.transactions.enriching.services import TransactionEnrichService
+from money_assistant.transactions.importing.services import TransactionImportService
+from money_assistant.transactions.analyzing.services import TransactionAnalysisService
 from money_assistant.transactions.models import Account, Category, Transaction
 
 
@@ -32,19 +32,30 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
     filterset_fields = ("account", "category", "kind")
 
-    @action(detail=False, url_path="import", methods=["post"])
-    def import_from_file(self, request):
-        file = request.FILES.get("file")
-        if not file:
-            raise ValidationError(detail={"file": ["This field is required."]})
-        serializer = TransactionImportSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            import_transactions_from_file(file=file, **serializer.data)
-        return Response("Success", status=status.HTTP_200_OK)
+    @action(detail=False, url_path="import", methods=["get", "post"])
+    def get_available_importers(self, request: Request) -> Response:
+        if request.method == "GET":
+            return Response(TransactionImportService.get_importer_types())
+        elif request.method == "POST":
+            file = request.FILES.get("file")
+            if not file:
+                raise ValidationError(detail={"file": ["This field is required."]})
+            serializer = TransactionImportSerializer(data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                TransactionImportService.import_transactions_from_file(
+                    file=file, **serializer.data
+                )
+            return Response("Success", status=status.HTTP_200_OK)
 
     @action(detail=False, url_path="enrich", methods=["post"])
-    def map_categories(self, request):
+    def map_categories(self, request: Request) -> Response:
         serializer = TransactionEnrichSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            enrich_transactions_with_categories(**serializer.data)
+            TransactionEnrichService.enrich_transactions_with_categories(
+                **serializer.data
+            )
         return Response("Success", status=status.HTTP_200_OK)
+
+    @action(detail=False, url_path="analyze", methods=["get"])
+    def analyze(self, _: Request) -> Response:
+        return Response(TransactionAnalysisService.get_analysis())
