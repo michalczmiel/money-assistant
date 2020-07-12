@@ -3,6 +3,8 @@ from rest_framework.validators import ValidationError
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.request import Request
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from money_assistant.transactions.serializers import (
     AccountSerializer,
@@ -30,7 +32,17 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    filter_backends = (
+        DjangoFilterBackend,
+        OrderingFilter,
+        SearchFilter,
+    )
     filterset_fields = ("account", "category", "kind")
+    search_fields = ("name",)
+    ordering_fields = (
+        "value",
+        "made_at",
+    )
 
     @action(detail=False, url_path="import", methods=["get", "post"])
     def get_available_importers(self, request: Request) -> Response:
