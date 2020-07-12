@@ -1,6 +1,9 @@
-.PHONY: format test lint
+.PHONY: format test lint dev
 
-all: format
+all: format lint
+
+dev:
+	cd .docker && docker-compose up db api
 
 format:
 	black money_assistant

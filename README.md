@@ -6,7 +6,7 @@
 
 ## Development
 
-Create configuration file
+Create and populate configuration file
 
 ```bash
 cp .docker/.env.dev .docker/.env
@@ -15,5 +15,5 @@ cp .docker/.env.dev .docker/.env
 Start the dev server
 
 ```bash
-cd .docker && docker-compose up
+make dev
 ```
