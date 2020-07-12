@@ -1,4 +1,4 @@
-.PHONY: format test
+.PHONY: format test lint
 
 all: format
 
@@ -7,3 +7,6 @@ format:
 
 test:
 	python manage.py test
+
+lint:
+	flake8 money_assistant
