@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "djmoney",
     "django_filters",
     "corsheaders",
+    "health_check",
+    "health_check.db",
     "money_assistant.base",
     "money_assistant.transactions",
     "money_assistant.budgets",

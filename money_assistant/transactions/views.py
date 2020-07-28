@@ -12,9 +12,13 @@ from money_assistant.transactions.serializers import (
     TransactionSerializer,
 )
 from money_assistant.transactions.enriching.services import TransactionEnrichService
-from money_assistant.transactions.enriching.serializers import TransactionEnrichSerializer
+from money_assistant.transactions.enriching.serializers import (
+    TransactionEnrichSerializer,
+)
 from money_assistant.transactions.importing.services import TransactionImportService
-from money_assistant.transactions.importing.serializers import TransactionImportSerializer
+from money_assistant.transactions.importing.serializers import (
+    TransactionImportSerializer,
+)
 from money_assistant.transactions.analyzing.services import TransactionAnalysisService
 from money_assistant.transactions.models import Account, Category, Transaction
 
