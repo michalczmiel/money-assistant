@@ -3,7 +3,7 @@
 all: format lint
 
 dev:
-	cd .docker && docker-compose up db api
+	cd .docker && docker-compose up db api redis worker
 
 format:
 	black money_assistant

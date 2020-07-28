@@ -7,4 +7,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include(router.urls)),
     path("ht/", include("health_check.urls")),
+    path("django-rq/", include("django_rq.urls")),
 ]

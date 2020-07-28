@@ -18,7 +18,7 @@ RUN chmod a+x /usr/local/bin/entrypoint-dev.sh
 
 CMD ["/usr/local/bin/entrypoint-dev.sh"]
 
-FROM base as prod
+FROM base AS prod
 
 COPY .docker/api/entrypoint.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/entrypoint.sh

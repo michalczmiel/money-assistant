@@ -6,6 +6,11 @@ services:
       target: dev
     volumes:
       - api:/api
+  worker:
+    build:
+      target: dev
+    volumes:
+      - api:/worker
 
 volumes:
   api:
@@ -13,3 +18,4 @@ volumes:
       type: none
       device: '${PWD}/..'
       o: bind
+

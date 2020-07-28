@@ -39,8 +39,11 @@ INSTALLED_APPS = [
     "djmoney",
     "django_filters",
     "corsheaders",
+    "django_rq",
     "health_check",
     "health_check.db",
+    "health_check.cache",
+    "health_check.contrib.redis",
     "money_assistant.base",
     "money_assistant.transactions",
     "money_assistant.budgets",
@@ -92,6 +95,17 @@ DATABASES = {
     }
 }
 
+REDIS_URL = f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}"
+
+RQ_QUEUES = {
+    "default": {
+        "HOST": os.environ["REDIS_HOST"],
+        "PORT": os.environ["REDIS_PORT"],
+        "DB": os.environ["REDIS_DB"],
+        "PASSWORD": os.environ.get("REDIS_PASSWORD"),
+        "DEFAULT_TIMEOUT": 360,
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

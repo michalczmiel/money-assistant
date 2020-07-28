@@ -6,12 +6,13 @@ from rest_framework.request import Request
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+import django_rq
+
 from money_assistant.transactions.serializers import (
     AccountSerializer,
     CategorySerializer,
     TransactionSerializer,
 )
-from money_assistant.transactions.enriching.services import TransactionEnrichService
 from money_assistant.transactions.enriching.serializers import (
     TransactionEnrichSerializer,
 )
@@ -58,8 +59,11 @@ class TransactionViewSet(viewsets.ModelViewSet):
                 raise ValidationError(detail={"file": ["This field is required."]})
             serializer = TransactionImportSerializer(data=request.data)
             if serializer.is_valid(raise_exception=True):
-                TransactionImportService.import_transactions_from_file(
-                    file=file, **serializer.data
+                django_rq.enqueue(
+                    "money_assistant.transactions.importing.jobs.import_transactions_from_file",
+                    file=file,
+                    account_id=serializer.account_id,
+                    importer_type=serializer.importer_type,
                 )
             return Response("Success", status=status.HTTP_200_OK)
 
@@ -67,9 +71,12 @@ class TransactionViewSet(viewsets.ModelViewSet):
     def map_categories(self, request: Request) -> Response:
         serializer = TransactionEnrichSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            TransactionEnrichService.enrich_transactions_with_categories(
-                **serializer.data
+            django_rq.enqueue(
+                "money_assistant.transactions.enriching.jobs.enrich_transactions_with_categories",
+                account_id=serializer.data["account_id"],
+                mappings=serializer.data["mappings"],
             )
+
         return Response("Success", status=status.HTTP_200_OK)
 
     @action(detail=False, url_path="analyze", methods=["get"])

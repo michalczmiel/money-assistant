@@ -13,6 +13,11 @@ services:
       - db:/var/lib/postgresql/data
     restart: unless-stopped
 
+  redis:
+    image: redis:6.0.6-alpine
+    ports:
+      - '127.0.0.1:${REDIS_PORT}:6379'
+
   api:
     build:
       context: ..
@@ -25,10 +30,37 @@ services:
       DB_PORT: '${DB_PORT}'
       DB_USER: '${DB_USER}'
       DB_PASSWORD: '${DB_PASSWORD}'
+      REDIS_HOST: '${REDIS_HOST}'
+      REDIS_PORT: '${REDIS_PORT}'
+      REDIS_DB: '${REDIS_DB}'
+      REDIS_PASSWORD: '${REDIS_PASSWORD}'
       DJANGO_SECRET_KEY: '${DJANGO_SECRET_KEY}'
       DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
     depends_on:
       - db
+      - redis
+
+  worker:
+    build:
+      context: ..
+      dockerfile: .docker/worker/Dockerfile
+    environment:
+      DB_HOST: '${DB_HOST}'
+      DB_NAME: '${DB_NAME}'
+      DB_PORT: '${DB_PORT}'
+      DB_USER: '${DB_USER}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      REDIS_HOST: '${REDIS_HOST}'
+      REDIS_PORT: '${REDIS_PORT}'
+      REDIS_DB: '${REDIS_DB}'
+      REDIS_PASSWORD: '${REDIS_PASSWORD}'
+      DJANGO_SECRET_KEY: '${DJANGO_SECRET_KEY}'
+      DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+      - api
 
 volumes:
   db:
