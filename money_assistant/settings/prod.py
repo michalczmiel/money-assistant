@@ -4,12 +4,14 @@ from .base import *
 
 import dj_database_url
 
-DATABASES["default"] = dj_database_url.config(os.environ.get("DB_URL"))
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+DATABASES["default"] = dj_database_url.config()
 
 REDIS_URL = os.environ.get("REDIS_URL")
 
 RQ_QUEUES = {
-    "default": {"URL": REDIS_URL,},
+    "default": {"URL": REDIS_URL},
 }
 
 DEBUG = False
