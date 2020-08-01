@@ -87,21 +87,22 @@ WSGI_APPLICATION = "money_assistant.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ["DB_NAME"],
-        "USER": os.environ["DB_USER"],
-        "PASSWORD": os.environ["DB_PASSWORD"],
-        "HOST": os.environ["DB_HOST"],
-        "PORT": os.environ["DB_PORT"],
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT"),
     }
 }
 
-REDIS_URL = f"redis://{os.environ['REDIS_HOST']}:{os.environ['REDIS_PORT']}"
+REDIS_URL = f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}"
 
 RQ_QUEUES = {
     "default": {
-        "HOST": os.environ["REDIS_HOST"],
-        "PORT": os.environ["REDIS_PORT"],
-        "DB": os.environ["REDIS_DB"],
+        "HOST": os.environ.get("REDIS_HOST"),
+        "PORT": os.environ.get("REDIS_PORT"),
+        "DB": os.environ.get("REDIS_DB"),
+        "USER": os.environ.get("REDIS_USER"),
         "PASSWORD": os.environ.get("REDIS_PASSWORD"),
         "DEFAULT_TIMEOUT": 360,
     },
